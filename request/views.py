@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import Requete
+from .serializers import RequeteSerializer
 
-# Create your views here.
+class RequeteViewSet(viewsets.ModelViewSet):
+    queryset = Requete.objects.all()
+    serializer_class = RequeteSerializer
