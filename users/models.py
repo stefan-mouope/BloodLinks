@@ -53,3 +53,7 @@ class Donneur(models.Model):
 
     def __str__(self):
         return f"{self.nom} {self.prenom} ({self.groupe_sanguin})"
+    
+
+
+
