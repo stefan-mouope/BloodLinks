@@ -5,6 +5,17 @@ class Requete(models.Model):
     date_requete = models.DateTimeField(auto_now_add=True)
     groupe_sanguin = models.CharField(max_length=5)
     quantite = models.PositiveIntegerField(default=0)
+    
+    # Nouveau champ statut
+    statut = models.CharField(
+        max_length=20,
+        choices=[
+            ('en_attente', 'En attente'),
+            ('valide', 'Validé'),
+            ('refusee', 'Refusee')
+        ],
+        default='en_attente'
+    )
 
     def __str__(self):
-        return f"Requete {self.id} - {self.groupe_sanguin}"
+        return f"Requete {self.id} - {self.groupe_sanguin} ({self.statut})"

@@ -14,10 +14,4 @@ class Don(models.Model):
     def __str__(self):
         return f"Don {self.id} - {self.donneur} ({self.statut})"
 
-class FaireDon(models.Model):
-    alerte = models.ForeignKey('alert.Alerte', on_delete=models.CASCADE, related_name='reponses')
-    donneur = models.ForeignKey('users.Donneur', on_delete=models.CASCADE, related_name='reponses')
-    date_reponse = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"FaireDon: {self.donneur} -> Alerte {self.alerte.id}"

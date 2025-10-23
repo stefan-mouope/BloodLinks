@@ -1,11 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import Don, FaireDon
-from .serializers import DonSerializer, FaireDonSerializer
-
-class FaireDonViewSet(viewsets.ModelViewSet):
-    queryset = FaireDon.objects.all()
-    serializer_class = FaireDonSerializer
+from .models import Don
+from .serializers import DonSerializer
 
 
 class DonViewSet(viewsets.ModelViewSet):

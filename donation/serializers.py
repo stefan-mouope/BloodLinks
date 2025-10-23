@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from .models import Don, FaireDon
+from .models import Don
 
-class FaireDonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FaireDon
-        fields = '__all__'
 
 
 class DonSerializer(serializers.ModelSerializer):
