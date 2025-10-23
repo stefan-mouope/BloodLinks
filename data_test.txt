@@ -1,0 +1,53 @@
+-------------------ETAPE 1: Le docteur cree la requete----------------------------------------
+
+POST http://127.0.0.1:8000/api/request/requetes/
+
+{
+    "docteur": 1,
+    "groupe_sanguin": "A+",
+    "quantite": 2
+}
+
+
+-------------------ETAPE 2: La banque cree la l'alerte liee a la  cree la requete----------------------------------------
+
+
+POST http://127.0.0.1:8000/api/alert/alertes
+{
+    "requete": 1,
+    "groupe_sanguin": "A+",
+    "statut": "envoyee"
+}
+
+
+-------------------ETAPE 3: Le donneur appropriee accepte l'alerte avec son id comme indique dans la requete----------------------------------------
+
+
+PATCH  http://127.0.0.1:8000/api/alert/recevoir_alerte/1/
+
+
+{
+    "statut": "accepte"
+}
+
++++++++IL FAUT SAVOIR QU'ICI ON FONCTIONNE AVEC LA REGLE, PREMIEE ARRIVE, PREMIER SERVI: DONC LOSQU'UN DONNEUR ACCEPTE DEJA, UN AUTRE NE PEUT PLUS ACCPTER+++++
+
+
+
+
+-------------------ETAPE 4: La banque valide la requete du docteur----------------------------------------
+
+
+PATCH http://127.0.0.1:8000/api/request/requetes/1/valider/
+
+
+
+
+
+
+
+
+
+
+
+
