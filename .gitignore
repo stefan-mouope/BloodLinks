@@ -1,1 +1,41 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# === Environnements virtuels ===
+venv/
 env/
+.venv/
+
+# === Django ===
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+
+
+# === Migrations ===
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+*/migrations/*.pot
+*/migrations/*.mo
+*/migrations/*.log
+
+# === Environnements & variables sensibles ===
+.env
+
+
+# === IDEs et éditeurs ===
+.vscode/
+
+# === Coverage / Tests ===
+.cache
+
+
+
