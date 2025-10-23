@@ -5,7 +5,7 @@ class Requete(models.Model):
     date_requete = models.DateTimeField(auto_now_add=True)
     groupe_sanguin = models.CharField(max_length=5)
     quantite = models.PositiveIntegerField(default=0)
-    
+    #test
     # Nouveau champ statut
     statut = models.CharField(
         max_length=20,
