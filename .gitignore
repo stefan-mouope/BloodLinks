@@ -18,9 +18,10 @@ media/
 staticfiles/
 static/
 
-
 # === Migrations ===
 */migrations/__pycache__/
+# Garder les fichiers de migration (.py) pour que les autres puissent migrer
+# Donc on supprime cette ligne : */migrations/*.py
 */migrations/*.pyc
 */migrations/*.pyo
 */migrations/*.pot
@@ -30,12 +31,8 @@ static/
 # === Environnements & variables sensibles ===
 .env
 
-
 # === IDEs et éditeurs ===
 .vscode/
 
 # === Coverage / Tests ===
 .cache
-
-
-
