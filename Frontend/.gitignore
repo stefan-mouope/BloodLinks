@@ -1,0 +1,69 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Expo
+.expo/
+.expo-shared/
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/captures/
+android/.idea/
+android/.settings/
+android/*.iml
+
+# iOS
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace
+ios/*.xcuserstate
+ios/*.xcuserdatad/
+ios/.idea/
+
+# Xcode
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Metro bundler cache
+.cache/
+metro-cache/
+tmp/
+
+# Watchman
+.watchmanconfig
+
+# Misc
+.env
+.env.*
+*.log
+*.tmp
+*.swp
+
+# React Native Windows/macOS (if ever added)
+windows/Debug/
+windows/Release/
+macos/Build/
+macos/DerivedData/
