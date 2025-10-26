@@ -7,5 +7,6 @@ urlpatterns = [
     path('api/request/', include('request.urls')),
     path('api/alert/', include('alert.urls')),
     path('api/donation/', include('donation.urls')),
-    path('api/users/', include('users.urls'))
+    path('api/users/', include('users.urls')),
+    path("api/notifications/", include("notifications.urls"))
 ]

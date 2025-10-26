@@ -43,11 +43,14 @@ INSTALLED_APPS = [
     'donation',
     'users',
     'request',
-    'rest_framework'
+    'notifications',
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,6 +133,20 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL='users.CustomUser'
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+
+    "http://10.0.2.2:8081",   # si React Native dev server
+]
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "10.0.2.2"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
