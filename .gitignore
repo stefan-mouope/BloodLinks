@@ -18,6 +18,8 @@ media/
 staticfiles/
 static/
 
+#secrte
+firebase-admin-key.json
 
 # === Migrations ===
 */migrations/__pycache__/
@@ -39,3 +41,4 @@ static/
 
 
 
+config/firebase-admin-key.json
