@@ -23,6 +23,8 @@ firebase-admin-key.json
 
 # === Migrations ===
 */migrations/__pycache__/
+# Garder les fichiers de migration (.py) pour que les autres puissent migrer
+# Donc on supprime cette ligne : */migrations/*.py
 */migrations/*.pyc
 */migrations/*.pyo
 */migrations/*.pot
@@ -31,7 +33,6 @@ firebase-admin-key.json
 
 # === Environnements & variables sensibles ===
 .env
-
 
 # === IDEs et éditeurs ===
 .vscode/
