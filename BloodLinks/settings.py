@@ -148,7 +148,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://10.0.2.2:8081",   # si React Native dev server
 ]
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "10.0.2.2"]
+ALLOWED_HOSTS = ["*"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
