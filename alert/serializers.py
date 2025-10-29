@@ -1,14 +1,20 @@
 from rest_framework import serializers, status
-from rest_framework.response import  Response
+from rest_framework.response import Response
 from .models import Alerte, RecevoirAlerte
-from users.models import Donneur
+from users.models import Donneur, Docteur, BanqueDeSang
+from request.models import Requete
 from notifications.utils import send_multicast_push_notification
 from notifications.models import FCMToken
 
+
+# -----------------------------
+# Sérializers utilisateurs
+# -----------------------------
 class DonneurMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Donneur
         fields = ['id', 'nom', 'prenom', 'groupe_sanguin']
+
 
 class RecevoirAlerteSerializer(serializers.ModelSerializer):
     donneur = DonneurMiniSerializer(read_only=True)
@@ -16,6 +22,39 @@ class RecevoirAlerteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecevoirAlerte
         fields = ['id', 'alerte', 'donneur', 'date_reception', 'statut']
+
+
+# -----------------------------
+# Sérializers pour les alertes
+# -----------------------------
+class BanqueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BanqueDeSang
+        fields = ['id', 'nom', 'localisation']
+
+
+class DocteurSerializer(serializers.ModelSerializer):
+    banque = BanqueSerializer(source='BanqueDeSang', read_only=True)
+
+    class Meta:
+        model = Docteur
+        fields = ['id', 'nom', 'prenom', 'banque']
+
+
+class RequeteSerializer(serializers.ModelSerializer):
+    docteur = DocteurSerializer(read_only=True)
+
+    class Meta:
+        model = Requete
+        fields = ['id', 'groupe_sanguin', 'quantite', 'statut', 'docteur']
+
+
+class AlerteSimpleSerializer(serializers.ModelSerializer):
+    requete = RequeteSerializer(read_only=True)
+
+    class Meta:
+        model = Alerte
+        fields = ['id', 'requete', 'date_envoi', 'statut']
 
 
 class AlerteSerializer(serializers.ModelSerializer):

@@ -2,8 +2,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .utils import send_push_notification
-from .models import FCMToken, Notification
-from .serializers import FCMTokenSerializer, NotificationSerializer
+from .models import FCMToken
+from .serializers import FCMTokenSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -19,6 +19,9 @@ class FCMTokenViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get_queryset(self):
+        # l'utilisateur ne voit que ses propres tokens
+        return FCMToken.objects.filter(user=self.request.user)
 
 
 @api_view(['POST'])

@@ -61,7 +61,7 @@ class BanqueDeSang(models.Model):
 
 # Modèle Donneur
 class Donneur(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='donneurs')
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     groupe_sanguin = models.CharField(max_length=5)
