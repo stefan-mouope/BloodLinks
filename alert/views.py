@@ -14,7 +14,6 @@ class AlertesEnvoyeesParBanqueView(APIView):
 
     def get(self, request):
         banque_id = request.query_params.get("banque_id")
-
         if not banque_id:
             return Response(
                 {"detail": "Le paramètre 'banque_id' est requis dans l'URL."},
@@ -25,7 +24,7 @@ class AlertesEnvoyeesParBanqueView(APIView):
         alertes = (
             Alerte.objects
             .filter(
-                statut="envoyee",
+                statut="en_attente",
                 requete__docteur__BanqueDeSang_id=banque_id
             )
             .select_related(
@@ -108,13 +107,13 @@ class RecevoirAlerteViewSet(viewsets.ModelViewSet):
             )
 
         # Cas où le donneur accepte l’alerte
-        if nouveau_statut == 'accepte':
-            instance.statut = 'accepte'
-            instance.save()
+        if nouveau_statut == 'en_attente':
+            instance.alerte.statut = 'en_attente'
+            instance.alerte.save()
 
             # On met aussi à jour l'alerte principale
-            instance.alerte.statut = 'acceptee'
-            instance.alerte.save()
+            # instance.alerte.statut = 'en_attente'
+            # instance.alerte.save()
 
             # Tous les autres receveurs pour la même alerte sont refusés
             RecevoirAlerte.objects.filter(
