@@ -11,6 +11,7 @@ class Requete(models.Model):
         max_length=20,
         choices=[
             ('en_attente', 'En attente'),
+            ('envoyer', 'Envoyer'),
             ('valide', 'Validé'),
             ('refusee', 'Refusee')
         ],

@@ -7,15 +7,25 @@ from .models import Docteur, BanqueDeSang, Donneur
 User = get_user_model()
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Sérialiseur personnalisé pour renvoyer les infos de l'utilisateur + tokens
-    """
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        user = self.user
+from django.contrib.auth import authenticate
 
-        # Infos de base
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        user = authenticate(email=email, password=password)
+        if not user:
+            raise serializers.ValidationError("No active account found with the given credentials")
+
+        # Générer les tokens
+        refresh = RefreshToken.for_user(user)
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+        # Infos supplémentaires
         user_data = {
             'id': user.id,
             'email': user.email,
@@ -23,7 +33,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'is_active': user.is_active,
         }
 
-        # Infos spécifiques selon le type
+        # Ajouter infos spécifiques comme dans ton code
         if user.user_type == 'donneur' and hasattr(user, 'donneurs'):
             donneur = user.donneurs
             user_data.update({
