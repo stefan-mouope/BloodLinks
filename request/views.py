@@ -20,3 +20,10 @@ class RequeteViewSet(viewsets.ModelViewSet):
         requete.save()
         serializer = self.get_serializer(requete)
         return Response(serializer.data)
+    
+
+    @action(detail=False, methods=['get'], url_path='par-banque/(?P<banque_id>[^/.]+)')
+    def get_requetes_par_banque(self, request, banque_id=None):
+        requetes = Requete.objects.filter(docteur__BanqueDeSang__id=banque_id).order_by('-date_requete')
+        serializer = self.get_serializer(requetes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

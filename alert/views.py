@@ -5,6 +5,47 @@ from .models import Alerte, RecevoirAlerte
 
 from .serializers import AlerteSerializer, AlerteSimpleSerializer, RecevoirAlerteSerializer
 
+class AlertesEnvoyeesParBanqueView(APIView):
+    """
+    🔹 Retourne toutes les alertes envoyées pour une banque spécifique.
+    Exemple : /api/alertes/banque/?banque_id=1
+    """
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        banque_id = request.query_params.get("banque_id")
+
+        if not banque_id:
+            return Response(
+                {"detail": "Le paramètre 'banque_id' est requis dans l'URL."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Filtrer les alertes envoyées pour cette banque
+        alertes = (
+            Alerte.objects
+            .filter(
+                statut="envoyee",
+                requete__docteur__BanqueDeSang_id=banque_id
+            )
+            .select_related(
+                "requete",
+                "requete__docteur",
+                "requete__docteur__BanqueDeSang"
+            )
+            .order_by("-date_envoi")
+        )
+
+        if not alertes.exists():
+            return Response(
+                {"detail": f"Aucune alerte envoyée pour la banque {banque_id}."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = AlerteSimpleSerializer(alertes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 class AlerteParGroupeView(APIView):
     """

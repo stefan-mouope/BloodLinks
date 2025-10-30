@@ -16,7 +16,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/request/', include('request.urls')),
+    path('api/requetes/', include('request.urls')),
     path('api/alertes/', include('alert.urls')),
     path('api/users/', include('users.urls')),
     path('api/notifications/', include('notifications.urls')),
