@@ -68,6 +68,10 @@ class AlerteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         groupe = validated_data.pop('groupe_sanguin')
         alerte = Alerte.objects.create(**validated_data)
+        
+        if alerte.requete:
+            alerte.requete.statut = 'envoyee'  # choix valide
+            alerte.requete.save()
 
         # 🔹 Étape 1 : trouver les donneurs correspondants
         donneurs = Donneur.objects.filter(groupe_sanguin=groupe)

@@ -87,7 +87,8 @@ class RequeteViewSet(viewsets.ModelViewSet):
         🔹 Retourne toutes les requêtes pour une banque spécifique.
         """
         requetes = Requete.objects.filter(
-            docteur__BanqueDeSang__id=banque_id
+            docteur__BanqueDeSang__id=banque_id,
+            statut='en_attente'
         ).order_by('-date_requete')
         serializer = self.get_serializer(requetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
