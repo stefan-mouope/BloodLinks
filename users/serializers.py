@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Docteur, BanqueDeSang, Donneur
@@ -7,8 +7,7 @@ from .models import Docteur, BanqueDeSang, Donneur
 User = get_user_model()
 
 
-from django.contrib.auth import authenticate
-
+# 🔐 Authentification et génération de token
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         email = attrs.get("email")
@@ -16,35 +15,37 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         user = authenticate(email=email, password=password)
         if not user:
-            raise serializers.ValidationError("No active account found with the given credentials")
+            raise serializers.ValidationError("Aucun compte actif trouvé avec ces identifiants.")
 
-        # Générer les tokens
+        # Générer les tokens JWT
         refresh = RefreshToken.for_user(user)
         data = {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
 
-        # Infos supplémentaires
+        # Infos de base
         user_data = {
-            'id': user.id,
             'email': user.email,
             'user_type': user.user_type,
             'is_active': user.is_active,
         }
 
-        # Ajouter infos spécifiques comme dans ton code
+        # Ajouter les infos selon le rôle
         if user.user_type == 'donneur' and hasattr(user, 'donneurs'):
             donneur = user.donneurs
             user_data.update({
+                'id': donneur.id,
                 'nom': donneur.nom,
                 'prenom': donneur.prenom,
                 'groupe_sanguin': donneur.groupe_sanguin,
                 'disponible': donneur.disponible
             })
+
         elif user.user_type == 'docteur' and hasattr(user, 'docteur'):
             docteur = user.docteur
             user_data.update({
+                'id': docteur.id,
                 'nom': docteur.nom,
                 'prenom': docteur.prenom,
                 'code_inscription': docteur.code_inscription,
@@ -52,9 +53,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'BanqueDeSang_id': docteur.BanqueDeSang.id if docteur.BanqueDeSang else None,
                 'BanqueDeSang_nom': docteur.BanqueDeSang.nom if docteur.BanqueDeSang else None
             })
+
         elif user.user_type == 'banque' and hasattr(user, 'banquedesang'):
             banque = user.banquedesang
             user_data.update({
+                'id': banque.id,
                 'nom': banque.nom,
                 'localisation': banque.localisation,
                 'code_inscription': banque.code_inscription,
@@ -65,6 +68,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
+# 🧾 Enregistrement (inscription)
 class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -109,12 +113,12 @@ class RegisterSerializer(serializers.Serializer):
         password = validated_data.pop("password")
         email = validated_data.pop("email")
 
+        # Création du compte utilisateur
         user = User.objects.create(email=email, user_type=user_type, is_active=True)
         user.set_password(password)
         user.save()
 
-        # Création du profil selon le type
-        profile_data = {}
+        # Création du profil selon le rôle
         if user_type == "donneur":
             profile = Donneur.objects.create(user=user, **validated_data)
             profile_data = {
@@ -147,8 +151,9 @@ class RegisterSerializer(serializers.Serializer):
         # Génération du JWT
         refresh = RefreshToken.for_user(user)
 
+        # Retourner l'ID du profil spécifique (pas du CustomUser)
         return {
-            "id": user.id,
+            "id": profile.id,
             "email": user.email,
             "user_type": user.user_type,
             "refresh": str(refresh),
