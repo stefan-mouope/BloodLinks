@@ -4,7 +4,7 @@ from config.firebase_config import firebase_admin
 from django.contrib.auth import get_user_model
 from notifications.models import FCMToken  # à adapter selon ton modèle
 from django.core.exceptions import ObjectDoesNotExist
-
+from users.models import Docteur
 User = get_user_model()
 
 def send_push_notification(token, title, body, data=None):
@@ -83,13 +83,13 @@ def send_notification_to_banque(banque_id, title, body, data=None):
     Envoie une notification à la banque de sang donnée.
     Tous les docteurs rattachés à cette banque recevront la notification.
     """
-    from users.models import Docteur, FCMDevice
+
 
     docteurs = Docteur.objects.filter(BanqueDeSang_id=banque_id)
     tokens = []
 
     for doc in docteurs:
-        device = FCMDevice.objects.filter(user=doc.user).first()
+        device = FCMToken.objects.filter(user=doc.user).first()
         if device and device.token:
             tokens.append(device.token)
 

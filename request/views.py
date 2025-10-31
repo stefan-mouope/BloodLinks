@@ -3,39 +3,58 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Requete
 from .serializers import RequeteSerializer
-from notifications.utils import send_notification_to_banque  # ⚠️ fonction vue précédemment
+from notifications.utils import send_notification_to_banque
+from users.models import Docteur
+
 
 class RequeteViewSet(viewsets.ModelViewSet):
-    queryset = Requete.objects.all().order_by('-date_requete')
     serializer_class = RequeteSerializer
+
+    def get_queryset(self):
+        """
+        🔹 Filtrer les requêtes du docteur connecté.
+        """
+        try:
+            docteur = Docteur.objects.get(user=self.request.user)
+            return Requete.objects.filter(docteur=docteur).order_by('-date_requete')
+        except Docteur.DoesNotExist:
+            return Requete.objects.none()
 
     def perform_create(self, serializer):
         """
-        🔹 Appelée automatiquement à la création d'une requête.
-        On envoie une notification à la banque du docteur.
+        🔹 Lorsqu'une requête est créée :
+          - On associe automatiquement le docteur connecté
+          - On envoie une notification à la banque liée à ce docteur
         """
-        requete = serializer.save()  # On crée la requête normalement
+        try:
+            docteur = Docteur.objects.get(user=self.request.user)
+        except Docteur.DoesNotExist:
+            raise ValueError("Aucun docteur associé à cet utilisateur.")
 
-        # Vérifier si la requête a bien un docteur et une banque
-        if requete.docteur and requete.docteur.BanqueDeSang:
-            banque = requete.docteur.BanqueDeSang
+        # Création de la requête avec le docteur associé
+        requete = serializer.save(docteur=docteur)
+
+        # Vérifier si le docteur est rattaché à une banque
+        if docteur.BanqueDeSang:
+            banque = docteur.BanqueDeSang
 
             # Envoi de la notification à la banque
             send_notification_to_banque(
                 banque.id,
                 title="Nouvelle requête reçue 🩸",
-                body=f"Le docteur {requete.docteur.nom} {requete.docteur.prenom} "
-                     f"a soumis une requête pour {requete.quantite} unités du groupe {requete.groupe_sanguin}.",
+                body=(
+                    f"Le docteur {docteur.nom} {docteur.prenom} "
+                    f"a soumis une requête pour {requete.quantite} unités du groupe {requete.groupe_sanguin}."
+                ),
                 data={
                     "requete_id": str(requete.id),
-                    "docteur": f"{requete.docteur.nom} {requete.docteur.prenom}",
+                    "docteur": f"{docteur.nom} {docteur.prenom}",
                     "groupe": requete.groupe_sanguin
                 }
             )
-            print(f"✅ Notification envoyée à la banque {banque.nom if hasattr(banque, 'nom') else banque.id}")
-
+            print(f"✅ Notification envoyée à la banque {getattr(banque, 'nom', banque.id)}")
         else:
-            print("⚠️ Aucun docteur ou banque associée à cette requête — aucune notification envoyée.")
+            print("⚠️ Ce docteur n'est associé à aucune banque — notification non envoyée.")
 
     @action(detail=True, methods=['patch'], url_path='mettre-a-jour-statut')
     def mettre_a_jour_statut(self, request, pk=None):
@@ -65,8 +84,10 @@ class RequeteViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='par-banque/(?P<banque_id>[^/.]+)')
     def get_requetes_par_banque(self, request, banque_id=None):
         """
-        🔹 Retourne toutes les requêtes pour une banque spécifique
+        🔹 Retourne toutes les requêtes pour une banque spécifique.
         """
-        requetes = Requete.objects.filter(docteur__BanqueDeSang__id=banque_id).order_by('-date_requete')
+        requetes = Requete.objects.filter(
+            docteur__BanqueDeSang__id=banque_id
+        ).order_by('-date_requete')
         serializer = self.get_serializer(requetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
