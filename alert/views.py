@@ -2,8 +2,10 @@ from rest_framework import viewsets, status
 from rest_framework.response import  Response
 from rest_framework.views import APIView
 from .models import Alerte, RecevoirAlerte
-
+from rest_framework.decorators import action
 from .serializers import AlerteSerializer, AlerteSimpleSerializer, RecevoirAlerteSerializer
+from notifications.utils import send_notification_to_banque
+
 
 class AlertesEnvoyeesParBanqueView(APIView):
     """
@@ -83,11 +85,45 @@ class AlerteParGroupeView(APIView):
         serializer = AlerteSimpleSerializer(alertes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class AlerteViewSet(viewsets.ModelViewSet):
     queryset = Alerte.objects.all().order_by('-date_envoi')
     serializer_class = AlerteSerializer
 
+    @action(detail=True, methods=['patch'], url_path='mettre-a-jour-statut')
+    def mettre_a_jour_statut(self, request, pk=None):
+        """
+        🔹 Met à jour le statut d'une alerte.
+        Le nouveau statut doit être fourni dans le corps de la requête :
+        {
+            "statut": "valide" / "refuse" / ...
+        }
+        """
+        alert = self.get_object()
+        nouveau_statut = request.data.get('statut')
+
+        if not nouveau_statut:
+            return Response(
+                {"detail": "Le champ 'statut' est requis."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if alert.statut == nouveau_statut:
+            return Response(
+                {"detail": f"L'alerte a déjà le statut '{nouveau_statut}'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+     
+        alert.statut = nouveau_statut
+        alert.save()
+
+        if nouveau_statut == "acceptee":
+            if hasattr(alert, 'requete') and alert.requete:
+                alert.requete.statut = 'valide' 
+                alert.requete.save()
+
+        serializer = self.get_serializer(alert)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -111,19 +147,26 @@ class RecevoirAlerteViewSet(viewsets.ModelViewSet):
             instance.alerte.statut = 'en_attente'
             instance.alerte.save()
 
-            # On met aussi à jour l'alerte principale
-            # instance.alerte.statut = 'en_attente'
-            # instance.alerte.save()
-
-            # Tous les autres receveurs pour la même alerte sont refusés
+            # Refuser les autres receveurs
             RecevoirAlerte.objects.filter(
                 alerte=instance.alerte
             ).exclude(id=instance.id).update(statut='refuse')
 
+            # ✅ Notification à la Banque de Sang
+            requete = instance.alerte.requete
+            if requete and requete.docteur and requete.docteur.BanqueDeSang:
+                banque_id = requete.docteur.BanqueDeSang.id
+                send_notification_to_banque(
+                    banque_id,
+                    title="Nouvelle alerte en attente ⚠️",
+                    body=f"Une alerte pour le groupe {requete.groupe_sanguin} est en attente.",
+                    data={"alerte_id": str(instance.alerte.id)}
+                )
+
         else:
-            # Simple mise à jour du statut (refus, etc.)
+            # Simple mise à jour du statut
             instance.statut = nouveau_statut
             instance.save()
 
         serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
