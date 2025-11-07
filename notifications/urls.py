@@ -10,6 +10,7 @@ router.register(r'fcm-tokens', FCMTokenViewSet, basename='fcm-token')
 
 urlpatterns = [
     path("send/", send_notification, name="send-notification"),
-    path('', include(router.urls)),
     path('reset-db/', reset_database, name='reset-database'),
+    path('', include(router.urls)),
+
 ]
