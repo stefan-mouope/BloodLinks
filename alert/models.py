@@ -18,11 +18,11 @@ class RecevoirAlerte(models.Model):
     alerte = models.ForeignKey('alert.Alerte', on_delete=models.CASCADE, related_name='recus')
     donneur = models.ForeignKey('users.Donneur', on_delete=models.CASCADE, related_name='recus')
     date_reception = models.DateTimeField(auto_now_add=True)
-    # statut = models.CharField(
-    #     max_length=20,
-    #     choices=[('en_attente','En attente'),('accepte','Accepté'),('refuse','Refusé')],
-    #     default='en_attente'
-    # )
+    statut = models.CharField(
+        max_length=20,
+        choices=[('en_attente','En attente'),('accepte','Accepté'),('refuse','Refusé')],
+        default='en_attente'
+    )
 
     def __str__(self):
         return f"{self.donneur} -> Alerte {self.alerte.id}"

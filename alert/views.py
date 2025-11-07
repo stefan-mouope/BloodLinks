@@ -76,6 +76,8 @@ class AlerteParGroupeView(APIView):
             .order_by("-date_envoi")
         )
 
+        
+
         if not alertes.exists():
             return Response(
                 {"detail": f"Aucune alerte trouvée pour le groupe sanguin {groupe_sanguin}."},
@@ -134,7 +136,8 @@ class RecevoirAlerteViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         nouveau_statut = request.data.get('statut')
-
+        print('teste', instance.alerte.id)
+        
         # Vérifie le statut de l'alerte principale
         if instance.alerte.statut != 'envoyee':
             return Response(
@@ -164,9 +167,12 @@ class RecevoirAlerteViewSet(viewsets.ModelViewSet):
                 )
 
         else:
-            # Simple mise à jour du statut
+            # Simple mise à jour du statut de la réception
             instance.statut = nouveau_statut
             instance.save()
 
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # 🔹 Sérialiser l’alerte liée plutôt que la réception
+        from .serializers import AlerteSerializer
+        alerte_serializer = AlerteSerializer(instance.alerte)
+
+        return Response(alerte_serializer.data, status=status.HTTP_200_OK)
