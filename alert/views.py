@@ -37,11 +37,11 @@ class AlertesEnvoyeesParBanqueView(APIView):
             .order_by("-date_envoi")
         )
 
-        if not alertes.exists():
-            return Response(
-                {"detail": f"Aucune alerte envoyée pour la banque {banque_id}."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        # if not alertes.exists():
+        #     return Response(
+        #         {"detail": f"Aucune alerte envoyée pour la banque {banque_id}."},
+        #         status=status.HTTP_404_NOT_FOUND
+        #     )
 
         serializer = AlerteSimpleSerializer(alertes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
