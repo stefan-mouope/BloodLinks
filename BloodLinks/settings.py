@@ -102,6 +102,7 @@ CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://bloodlink-web-nu9s.onrender.com"
 ]
 
 # -------------------------------------------
