@@ -95,7 +95,7 @@ class AlerteViewSet(viewsets.ModelViewSet):
         🔹 Met à jour le statut d'une alerte.
         Le nouveau statut doit être fourni dans le corps de la requête :
         {
-            "statut": "en_attente", "envoyee","valide" / "refuse" / ...
+            "statut": "en_attente", "envoyee","acceptee" / "refuse" / ...
         }
         """
         alert = self.get_object()
