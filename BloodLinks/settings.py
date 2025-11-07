@@ -61,24 +61,30 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'BloodLinks.wsgi.application'
-
-if os.getenv("DATABASE_URL"):
-    # ✅ En production : PostgreSQL (via DATABASE_URL)
-    DATABASES = {
+DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('DATABASE_URL'),
             conn_max_age=600,
             ssl_require=True
         )
     }
-else:
-    # ✅ En développement : SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# if os.getenv("DATABASE_URL"):
+#     # ✅ En production : PostgreSQL (via DATABASE_URL)
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#             default=os.getenv('DATABASE_URL'),
+#             conn_max_age=600,
+#             ssl_require=True
+#         )
+#     }
+# else:
+#     # ✅ En développement : SQLite
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
 
 
 REST_FRAMEWORK = {
