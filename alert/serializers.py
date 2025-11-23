@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from .models import Alerte, RecevoirAlerte
 from users.models import Donneur, Docteur, BanqueDeSang
 from request.models import Requete
-from notifications.utils import send_multicast_push_notification
-from notifications.models import FCMToken
+from notification.utils import send_multicast_push_notification
+from notification.models import FCMToken
 
 
 # -----------------------------

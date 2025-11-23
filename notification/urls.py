@@ -1,4 +1,4 @@
-# notifications/urls.py
+# notification/urls.py
 from django.urls import path, include
 from .views import send_notification, FCMTokenViewSet
 from rest_framework.routers import DefaultRouter

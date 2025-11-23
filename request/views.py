@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Requete
 from .serializers import RequeteSerializer
-from notifications.utils import send_notification_to_banque
+from notification.utils import send_notification_to_banque
 from users.models import Docteur
 
 

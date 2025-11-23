@@ -1,8 +1,8 @@
-# notifications/utils.py
+# notification/utils.py
 from firebase_admin import messaging
 from config.firebase_config import firebase_admin
 from django.contrib.auth import get_user_model
-from notifications.models import FCMToken  # à adapter selon ton modèle
+from notification.models import FCMToken  # à adapter selon ton modèle
 from django.core.exceptions import ObjectDoesNotExist
 from users.models import Docteur
 User = get_user_model()
@@ -48,7 +48,7 @@ def send_multicast_push_notification(tokens, title, body, data=None):
             success_count += 1
         except Exception as e:
             print(f"⚠️ Échec pour le token {token}: {e}")
-    print(f"Notifications envoyées : {success_count} réussies / {len(tokens) - success_count} échecs")
+    print(f"notification envoyées : {success_count} réussies / {len(tokens) - success_count} échecs")
     return success_count > 0
 
 

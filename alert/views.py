@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from .models import Alerte, RecevoirAlerte
 from rest_framework.decorators import action
 from .serializers import AlerteSerializer, AlerteSimpleSerializer, RecevoirAlerteSerializer
-from notifications.utils import send_notification_to_banque
+from notification.utils import send_notification_to_banque
 
 
 class AlertesEnvoyeesParBanqueView(APIView):

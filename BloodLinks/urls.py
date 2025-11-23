@@ -20,7 +20,7 @@ urlpatterns = [
     path('api/requetes/', include('request.urls')),
     path('api/alertes/', include('alert.urls')),
     path('api/users/', include('users.urls')),
-    path('api/notifications/', include('notifications.urls')),
+    path('api/notifications/', include('notification.urls')),
 
     # Swagger UI
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
