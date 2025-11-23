@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import RegisterSerializer, CustomTokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework import status, permissions
-
+from rest_framework_simplejwt.views import TokenRefreshView
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -39,3 +39,6 @@ class LogoutView(APIView):
 
         except TokenError:
             return Response({"error": "Token invalide ou déjà révoqué"}, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomTokenRefreshView(TokenRefreshView):
+    permission_classes = [AllowAny]
