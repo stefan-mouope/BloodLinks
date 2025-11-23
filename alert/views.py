@@ -139,7 +139,7 @@ class RecevoirAlerteViewSet(viewsets.ModelViewSet):
         print('teste', instance.alerte.id)
         
         # Vérifie le statut de l'alerte principale
-        if instance.alerte.statut == 'en_attente' :
+        if instance.alerte.statut != 'en_attente' :
             return Response(
                 {"detail": f"Cette alerte a déjà été traitée ({instance.alerte.statut})."},
                 status=status.HTTP_400_BAD_REQUEST

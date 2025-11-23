@@ -86,7 +86,13 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user_type = attrs.get("user_type")
+        email = attrs.get("email")
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError({
+                "email": "Un utilisateur avec cet email existe déjà."
+            })
 
+    
         if user_type == "donneur":
             for field in ["nom", "prenom", "groupe_sanguin"]:
                 if not attrs.get(field):
