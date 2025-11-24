@@ -69,7 +69,7 @@ class AlerteParGroupeView(APIView):
         alertes = (
             Alerte.objects
             .filter(
-                statut="envoyee",
+                statut="en_attente",
                 requete__groupe_sanguin=groupe_sanguin
             )
             .select_related("requete__docteur", "requete__docteur__BanqueDeSang")
