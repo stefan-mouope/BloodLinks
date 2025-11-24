@@ -6,7 +6,7 @@ class Alerte(models.Model):
     statut = models.CharField(
         max_length=20,
         choices=[('en_attente', 'En attente'),('envoyee', 'Envoyée'), ('acceptee', 'Acceptée'), ('annulee', 'Annulée')],
-        default='envoyee'
+        default='en_attente'
     )
 
     def __str__(self):
