@@ -26,7 +26,7 @@ class AlertesEnvoyeesParBanqueView(APIView):
         alertes = (
             Alerte.objects
             .filter(
-                statut="en_attente",
+                statut="envoyee",
                 requete__docteur__BanqueDeSang_id=banque_id
             )
             .select_related(
