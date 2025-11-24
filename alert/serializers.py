@@ -70,7 +70,7 @@ class AlerteSerializer(serializers.ModelSerializer):
         alerte = Alerte.objects.create(**validated_data)
         
         if alerte.requete:
-            alerte.requete.statut = 'envoyee'  # choix valide
+            alerte.requete.statut = 'en_attente'  # choix valide
             alerte.requete.save()
 
         # 🔹 Étape 1 : trouver les donneurs correspondants
